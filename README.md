@@ -8,7 +8,7 @@ To run this app locally, follow these steps:
 
 1. Clone the repository:
 
-git clone https://github.com/dereck306/serverless-chat-react-app.git
+git clone https://github.com/dereck306/LiveChat_Dereck.git
 
 2. Install dependencies:
 
