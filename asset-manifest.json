@@ -1,15 +1,17 @@
 {
   "files": {
-    "main.css": "/LiveChat_Dereck/static/css/main.073c9b0a.css",
-    "main.js": "/LiveChat_Dereck/static/js/main.46a61c66.js",
+    "main.css": "/LiveChat_Dereck/static/css/main.42f22096.css",
+    "main.js": "/LiveChat_Dereck/static/js/main.32c60e5e.js",
     "static/js/787.8e709a2c.chunk.js": "/LiveChat_Dereck/static/js/787.8e709a2c.chunk.js",
+    "static/media/Recieved_Notification.mp3": "/LiveChat_Dereck/static/media/Recieved_Notification.6dc40117b90f9e8bd29f.mp3",
+    "static/media/Send_Notification.mp3": "/LiveChat_Dereck/static/media/Send_Notification.4c52341e2dc865b3663e.mp3",
     "index.html": "/LiveChat_Dereck/index.html",
-    "main.073c9b0a.css.map": "/LiveChat_Dereck/static/css/main.073c9b0a.css.map",
-    "main.46a61c66.js.map": "/LiveChat_Dereck/static/js/main.46a61c66.js.map",
+    "main.42f22096.css.map": "/LiveChat_Dereck/static/css/main.42f22096.css.map",
+    "main.32c60e5e.js.map": "/LiveChat_Dereck/static/js/main.32c60e5e.js.map",
     "787.8e709a2c.chunk.js.map": "/LiveChat_Dereck/static/js/787.8e709a2c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.46a61c66.js"
+    "static/css/main.42f22096.css",
+    "static/js/main.32c60e5e.js"
   ]
 }
