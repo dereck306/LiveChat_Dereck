@@ -25,7 +25,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>⚛️🔥💬</h1>
+        <h1>Live Chat Dereck Rojas</h1>
         <SignOut />
       </header>
 
@@ -46,8 +46,7 @@ function SignIn() {
 
   return (
     <>
-      <button className="sign-in" onClick={signInWithGoogle}>Sign in with Google</button>
-      <p>Do not violate prueba the community guidelines or you will be banned for life!</p>
+      <button className="sign-in" onClick={signInWithGoogle}>Iniciar Sesion con Google</button>
     </>
   )
 
@@ -55,7 +54,7 @@ function SignIn() {
 
 function SignOut() {
   return auth.currentUser && (
-    <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
+    <button className="sign-out" onClick={() => auth.signOut()}>Cerrar Sesion</button>
   )
 }
 function ChatRoom() {
