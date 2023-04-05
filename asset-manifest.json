@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/LiveChat_Dereck/static/css/main.073c9b0a.css",
-    "main.js": "/LiveChat_Dereck/static/js/main.3cb5e190.js",
+    "main.js": "/LiveChat_Dereck/static/js/main.cdb8091c.js",
     "static/js/787.8e709a2c.chunk.js": "/LiveChat_Dereck/static/js/787.8e709a2c.chunk.js",
     "index.html": "/LiveChat_Dereck/index.html",
     "main.073c9b0a.css.map": "/LiveChat_Dereck/static/css/main.073c9b0a.css.map",
-    "main.3cb5e190.js.map": "/LiveChat_Dereck/static/js/main.3cb5e190.js.map",
+    "main.cdb8091c.js.map": "/LiveChat_Dereck/static/js/main.cdb8091c.js.map",
     "787.8e709a2c.chunk.js.map": "/LiveChat_Dereck/static/js/787.8e709a2c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.3cb5e190.js"
+    "static/js/main.cdb8091c.js"
   ]
 }
