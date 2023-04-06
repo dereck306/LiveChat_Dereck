@@ -1,3 +1,20 @@
+/* Color scheme and typography */
+
+:root {
+    --primary-color: #3c8dbc;
+    --secondary-color: #007bff;
+    --background-color: #f0f0f0;
+    --light-gray: #ccc;
+    --dark-text: #333;
+    --light-text: #fff;
+    --font-family: 'Roboto', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--dark-text);
+}
+
 .App {
     display: flex;
     height: 100vh;
@@ -5,9 +22,9 @@
 
 .sidebar {
     flex: 0 0 250px;
-    border-right: 1px solid #ccc;
+    border-right: 1px solid var(--light-gray);
     overflow-y: auto;
-    background-color: #f0f0f0;
+    background-color: var(--background-color);
     padding: 1rem;
 }
 
@@ -25,6 +42,8 @@
     justify-content: space-between;
     padding: 1rem;
     overflow: hidden;
+    background-color: #ebebeb;
+    /* Add background color */
 }
 
 .messages {
@@ -52,7 +71,6 @@
 .message {
     display: flex;
     align-items: center;
-    /* change from flex-end to center */
     margin-bottom: 1rem;
 }
 
@@ -64,7 +82,7 @@
     justify-content: flex-end;
 }
 
-.message img {
+.message .avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -73,7 +91,7 @@
 }
 
 .message p {
-    background-color: #f0f0f0;
+    background-color: var(--background-color);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
     max-width: 80%;
@@ -81,8 +99,8 @@
 }
 
 .message.sent p {
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--secondary-color);
+    color: var(--light-text);
 }
 
 .user-list {
@@ -153,4 +171,137 @@ h2 {
     font-weight: 500;
     margin-bottom: 1rem;
     text-align: center;
+}
+
+.unread-count {
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    display: inline-block;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    margin-left: 5px;
+    text-align: center;
+    width: 20px;
+}
+
+.chat-media {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.enlarged-media {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 50%;
+    max-height: 50%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    overflow: auto;
+}
+
+.file-input-wrapper {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    padding: 10px 20px;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin-right: 10px;
+    /* Increase horizontal padding */
+    cursor: pointer;
+    min-width: 150px;
+    /* Add a minimum width to contain more letters */
+    text-align: center;
+    /* Center the text */
+    font-size: 1rem;
+    /* Increase the font size */
+}
+
+.file-input-wrapper input[type='file'] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-wrapper:hover {
+    background-color: #e1e1e1;
+}
+
+.file-input-wrapper:active {
+    background-color: #d1d1d1;
+}
+
+.file-input-label {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-input-selected::after {
+    opacity: 1;
+}
+
+.file-input-selected {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    background-color: #007bff;
+    /* Change the background color */
+    color: white;
+    padding: 10px 20px;
+    padding-top: 0.9%;
+    padding-bottom: 0.9%;
+    /* Add padding to increase the size */
+    border-radius: 4px;
+    /* Add border-radius for rounded edges */
+    transition: background-color 200ms;
+    /* Add transition for hover effect */
+}
+
+.file-input-selected:hover {
+    background-color: #0056b3;
+    /* Change the background color on hover */
+}
+
+.spinner-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Semi-transparent background */
+    z-index: 9999;
+    /* High z-index to make sure it's on top */
 }

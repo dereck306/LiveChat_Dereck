@@ -11,6 +11,8 @@ import { Button, TextField, Box, Typography } from '@mui/material';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import receivedAudioFile from './Recieved_Notification.mp3';
 import sentAudioFile from './Send_Notification.mp3';
+import 'firebase/compat/storage';
+import { CircularProgress } from '@mui/material';
 
 
 firebase.initializeApp({
@@ -29,6 +31,7 @@ const receivedAudio = new Audio(receivedAudioFile);
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
+const storage = firebase.storage();
 
 function App() {
   const [user] = useAuthState(auth);
@@ -151,7 +154,7 @@ function SignOut({ usersRef }) {
     }
   };
   return auth.currentUser && (
-    <Button variant="outlined" color="secondary" onClick={handleSignOut}>
+    <Button variant="outlined" color="primary" onClick={handleSignOut}>
       Cerrar Sesion
     </Button>
   );
@@ -161,6 +164,36 @@ function ChatRoom({ chatType, selectedUser }) {
   const dummy = useRef();
   const messagesRef = firestore.collection('messages');
   const query = messagesRef.orderBy('createdAt');
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState('');
+  const [fileSelected, setFileSelected] = useState(false); 
+  const [loading, setLoading] = useState(false); 
+  const [showSpinner, setShowSpinner] = useState(false);
+
+  const handleFileChange = (e) => {
+    setShowSpinner(true);
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      setFileName(file.name);
+      setFileSelected(true); // set fileSelected state to true when a file is selected
+    }
+  };
+
+  const uploadFileAndGetURL = async () => {
+    if (!file) {
+      return null;
+    }
+    setLoading(true); // set
+    const storageRef = storage.ref();
+    const fileRef = storageRef.child(`chat_media/${file.name}`);
+    await fileRef.put(file);
+
+    const fileURL = await fileRef.getDownloadURL();
+    setLoading(false);
+    return fileURL;
+  };
+
 
   const privateMessagesRef = firestore.collection('privateMessages');
   const privateQuery = useMemo(() => {
@@ -174,8 +207,9 @@ function ChatRoom({ chatType, selectedUser }) {
       .orderBy('createdAt');
   }, [selectedUser, privateMessagesRef]);
 
-  const [publicMessages] = useCollectionData(query, { idField: 'id' });
-  const [privateMessagesData] = useCollectionData(privateQuery, { idField: 'id' });
+  const [publicMessages] = useCollectionData(query, { idField: 'id', dataField: 'data' });
+  const [privateMessagesData] = useCollectionData(privateQuery, { idField: 'id', dataField: 'data' });
+  
 
   const messages = chatType === 'private' ? privateMessagesData : publicMessages;
 
@@ -190,17 +224,32 @@ function ChatRoom({ chatType, selectedUser }) {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (messages) {
+      dummy.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const sendMessage = async (e) => {
     e.preventDefault();
   
     const { uid, photoURL } = auth.currentUser;
-  
-    const newMessage = {
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL,
-    };
+
+    const mediaURL = await uploadFileAndGetURL();
+
+  const newMessage = {
+  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  uid,
+  photoURL,
+};
+
+if (formValue) {
+  newMessage.text = formValue;
+}
+
+if (mediaURL) {
+  newMessage.mediaURL = mediaURL;
+}
 
     sentAudio.play();
   
@@ -223,9 +272,12 @@ function ChatRoom({ chatType, selectedUser }) {
         await privateChatRef.collection('messages').add(newMessage);
       }
     }
-  
+
     setFormValue('');
-    dummy.current.scrollIntoView({ behavior: 'smooth' });
+    setFile(null); 
+    setFileSelected(false); // reset fileSelected state to false
+    setFileName(''); // reset fileName state to empty string
+    setLoading(false);
   };  
     return (
       <div className="chat-area">
@@ -243,6 +295,22 @@ function ChatRoom({ chatType, selectedUser }) {
   
         <form onSubmit={sendMessage}>
           <Box display="flex" alignItems="center" mt={2} width="100%">
+          <label className={`file-input-wrapper ${fileSelected ? 'file-input-selected' : ''}`}>
+  <input
+    type="file"
+    accept="image/*,video/*"
+    onChange={handleFileChange}
+  />
+{loading ? (
+ <div className="spinner-container">
+ <div className="loading-spinner">
+   <CircularProgress size={40} className="custom-loading-spinner" />
+ </div>
+</div>
+) : (
+  <span className="file-input-label">{fileName || 'Subir Archivo'}</span>
+)}
+</label>
             <TextField
               value={formValue}
               onChange={(e) => setFormValue(e.target.value)}
@@ -251,14 +319,14 @@ function ChatRoom({ chatType, selectedUser }) {
               margin="dense"
               sx={{ flexGrow: 1 }} // Add flexGrow property here
             />
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              disabled={!formValue}
-            >
-              Enviar
-            </Button>
+       <Button
+  type="submit"
+  color="primary"
+  variant="contained"
+  disabled={!formValue && !file}
+>
+  Enviar
+</Button>
           </Box>
         </form>
       </div>
@@ -298,18 +366,82 @@ function ChatRoom({ chatType, selectedUser }) {
 
 
 
-function ChatMessage(props) {
-  const { text, uid, photoURL } = props.message;
+  function ChatMessage(props) {
+    const { text, uid, photoURL, mediaURL } = props.message;
+    console.log(mediaURL);
+  
+    const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+  
+    const isImage = mediaURL && mediaURL.match(/\.(jpeg|jpg|gif|png)(\?|$)/i);
+    const isVideo = mediaURL && mediaURL.match(/\.(mp4|webm|ogg)(\?|$)/i);
 
-  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+    const [enlargedMedia, setEnlargedMedia] = useState(null);
 
-  return (<>
-    <div className={`message ${messageClass}`}>
-      <img src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} />
-      <p>{text}</p>
-    </div>
-  </>)
-}
+    const handleClickMedia = () => {
+      setEnlargedMedia(mediaURL);
+    };
+  
+    const handleCloseEnlargedMedia = () => {
+      setEnlargedMedia(null);
+    };
+
+  
+    const renderMedia = () => {
+      if (isImage) {
+        return (
+          <img
+            src={mediaURL}
+            alt="Image"
+            className="chat-media"
+            onClick={handleClickMedia}
+          />
+        );
+      }
+  
+      if (isVideo) {
+        return (
+          <video
+            controls
+            className="chat-media"
+            onClick={handleClickMedia}
+          >
+            <source src={mediaURL} />
+            Your browser does not support the video tag.
+          </video>
+        );
+      }
+  
+      return null;
+    };
+    return (
+      <>
+        <div className={`message ${messageClass}`}>
+          <img className='avatar'
+            src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'}
+          />
+          {renderMedia()}
+          {text && <p>{text}</p>}
+        </div>
+        {enlargedMedia && (
+          <div
+            className="enlarged-media"
+            onClick={handleCloseEnlargedMedia}
+          >
+            {isImage && (
+              <img src={enlargedMedia} alt="Enlarged Image" />
+            )}
+            {isVideo && (
+              <video controls>
+                <source src={enlargedMedia} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+          </div>
+        )}
+      </>
+    );
+  }
+  
 
 async function initiatePrivateChat(user1, user2, chatType, selectedUser, messagesRef, newMessage) {
   const privateMessagesRef = firestore.collection('privateMessages');
