@@ -14,7 +14,7 @@ import sentAudioFile from './Send_Notification.mp3';
 import 'firebase/compat/storage';
 import { CircularProgress } from '@mui/material';
 
-
+// Initialize Firebase with configuration
 firebase.initializeApp({
   apiKey: "AIzaSyBXC1ccQlE2jnSq8FeW91h1oLYUF2p8Vd0",
   authDomain: "livechatdereckrojas.firebaseapp.com",
@@ -25,19 +25,20 @@ firebase.initializeApp({
   measurementId: "G-HCTVM0VPBV"
 });
 
-
+// Create instances for authentication, Firestore, and storage services
 const sentAudio = new Audio(sentAudioFile);
 const receivedAudio = new Audio(receivedAudioFile);
-
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
+
+// Main App component
 function App() {
+  // Component state and hooks
   const [user] = useAuthState(auth);
   const [chatType, setChatType] = useState('public');
   const [selectedUser, setSelectedUser] = useState(null);
-
   const usersRef = firestore.collection('users');
   const [users] = useCollectionData(usersRef, { idField: 'id' });
 
@@ -51,7 +52,7 @@ function App() {
     setChatType('public');
   };
 
-  
+  // Render the application
   return (
     <div className="App">
       <div className="sidebar">
@@ -103,6 +104,7 @@ function App() {
   );
 }
 
+// Sign-in component
 function SignIn({ usersRef }) {
 
   const signInWithGoogle = async () => {
@@ -138,7 +140,7 @@ function SignIn({ usersRef }) {
   );
 }
 
-
+// Sign-out component
 function SignOut({ usersRef }) {
   const handleSignOut = async () => {
     const currentUser = auth.currentUser;
@@ -160,6 +162,7 @@ function SignOut({ usersRef }) {
   );
 }
 
+// Chat room component
 function ChatRoom({ chatType, selectedUser }) {
   const dummy = useRef();
   const messagesRef = firestore.collection('messages');
@@ -333,8 +336,8 @@ if (mediaURL) {
     );
   }
   
-
-  function UserList({ users, onSelectUser, onEnterGlobalChat, selectedUser }) {
+// User list component
+function UserList({ users, onSelectUser, onEnterGlobalChat, selectedUser }) {
     const currentUser = auth.currentUser;
 
     return (
@@ -365,7 +368,7 @@ if (mediaURL) {
   }
 
 
-
+// Chat message component
   function ChatMessage(props) {
     const { text, uid, photoURL, mediaURL } = props.message;
     console.log(mediaURL);
@@ -442,7 +445,7 @@ if (mediaURL) {
     );
   }
   
-
+// Function to initiate a private chat
 async function initiatePrivateChat(user1, user2, chatType, selectedUser, messagesRef, newMessage) {
   const privateMessagesRef = firestore.collection('privateMessages');
   const existingChat = await privateMessagesRef
